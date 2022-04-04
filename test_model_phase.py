@@ -41,7 +41,7 @@ def disp_result(decode, range_SNR, interval):
         p4 = plt.subplot(4, len(pl_rangeSNR), i + 3 * len(pl_rangeSNR) + 1)
         p4.imshow(decode['trans_B'][i].reshape(28, 28), cmap='gray')  # 显示灰度图
         p4.set_title('Phase_B = ' + str(pl_rangeSNR[i]), fontproperties="SimHei", fontsize=10)
-    plt.savefig('../Semantic_PNC_test_LN/Results/picture_predict.png', dpi=200)
+    plt.savefig('../SE_PNC/Results/picture_predict.png', dpi=200)
     plt.close()
     # plt.show()
 
@@ -79,7 +79,7 @@ def plot_model_performance(psnr, psnr_A, psnr_B, range_SNR, name):
     plt.xlabel('Phase offsets')
     plt.ylim([18, 28])
     plt.grid(linestyle='-.')
-    file_dir = '../Semantic_PNC_test_LN/Results/' + name + '.png'
+    file_dir = '../SE_PNC/Results/' + name + '.png'
     plt.savefig(file_dir, dpi=200)
     plt.close()
     # plt.show()
@@ -112,7 +112,7 @@ def show_images(decode_images, x_test, position_compare):
 
 # Semantic  communication model
 def se_model():
-    SE_model = keras.models.load_model('../Semantic_PNC_test_LN/Models/3/SE_model.h5',
+    SE_model = keras.models.load_model('../SE_PNC/Models/3/SE_model.h5',
                                        {'ChannelLayerRelay': ChannelLayerRelay,
                                         'ChannelLayer': ChannelLayer,
                                         'ResidualBlockTx': ResidualBlockTx,

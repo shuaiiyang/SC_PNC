@@ -61,7 +61,7 @@ def main():
     (x_train_A, x_train_B), (x_test_A, x_test_B) = data_loader()
     # load model
     # pnc_model = PNC_Model(input_shape=(28, 28, 1))
-    pnc_model = keras.models.load_model('../Semantic_PNC_test_LN/Models/SE_model.h5',
+    pnc_model = keras.models.load_model('../SE_PNC/Models/SE_model.h5',
                                        {'ChannelLayerRelay': ChannelLayerRelay,
                                         'ChannelLayer': ChannelLayer,
                                         'ResidualBlockTx': ResidualBlockTx,
@@ -77,7 +77,7 @@ def main():
     # Step3: train
     epochs = 5
     # save model graph
-    keras.utils.plot_model(pnc_model, to_file='../Semantic_PNC_test_LN/Models/SE_model.png', show_shapes=True)
+    keras.utils.plot_model(pnc_model, to_file='../SE_PNC/Models/SE_model.png', show_shapes=True)
     pnc_model.fit(x=[x_train_A, x_train_B],
                   y=[x_train_A, x_train_B],
                   batch_size=100,
@@ -85,8 +85,7 @@ def main():
                   validation_data=([x_test_A, x_test_B], [x_test_A, x_test_B]),
                   shuffle=True
                   )
-    pnc_model.save("../Semantic_PNC_test_LN/Models/SE_model.h5")
-    return 0
+    pnc_model.save("../SE_PNC/Models/SE_model.h5")
 
 
 if __name__ == '__main__':

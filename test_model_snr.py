@@ -44,7 +44,7 @@ def disp_result(decode, range_SNR, interval):
         p4 = plt.subplot(4, len(pl_rangeSNR), i + 3 * len(pl_rangeSNR) + 1)
         p4.imshow(decode['trans_B'][i].reshape(28, 28), cmap='gray')  # 显示灰度图
         p4.set_title('SNR = ' + str(pl_rangeSNR[i]), fontproperties="SimHei", fontsize=10)
-    plt.savefig('../Semantic_PNC_test_LN/Results/picture_predict.png', dpi=200)
+    plt.savefig('../SE_PNC/Results/picture_predict.png', dpi=200)
     plt.close()
     # plt.show()
 
@@ -82,7 +82,7 @@ def plot_model_performance(psnr, psnr_A, psnr_B, range_SNR, name):
     plt.xlabel('Eb/N0(dB)')
     plt.ylim([18, 28])
     plt.grid(linestyle='-.')
-    file_dir = '../Semantic_PNC_test_LN/Results/' + name + '.png'
+    file_dir = '../SE_PNC/Results/' + name + '.png'
     plt.savefig(file_dir, dpi=200)
     plt.close()
     # plt.show()
@@ -115,7 +115,7 @@ def show_images(decode_images, x_test, position_compare):
 
 # Semantic  communication model
 def se_model():
-    SE_model = keras.models.load_model('../Semantic_PNC_test_LN/Models/3/SE_model.h5',
+    SE_model = keras.models.load_model('../SE_PNC/Models/3/SE_model.h5',
                                        {'ChannelLayerRelay': ChannelLayerRelay,
                                         'ChannelLayer': ChannelLayer,
                                         'ResidualBlockTx': ResidualBlockTx,
@@ -131,24 +131,24 @@ def se_model():
     # Node A
     Tx_en_A = keras.Model(inputs=SE_model.get_layer('b_A').input,
                           outputs=SE_model.get_layer('TxModel_A').output)
-    # keras.utils.plot_model(Tx_en_A, to_file='../Semantic_PNC_test_LN/Models/Block_Model/Tx_en_A.png', show_shapes=True)
+    # keras.utils.plot_model(Tx_en_A, to_file='../SE_PNC/Models/Block_Model/Tx_en_A.png', show_shapes=True)
     # Node B
     Tx_en_B = keras.Model(inputs=SE_model.get_layer('b_B').input,
                           outputs=SE_model.get_layer('TxModel_B').output)
-    # keras.utils.plot_model(Tx_en_B, to_file='../Semantic_PNC_test_LN/Models/Block_Model/Tx_en_B.png', show_shapes=True)
+    # keras.utils.plot_model(Tx_en_B, to_file='../SE_PNC/Models/Block_Model/Tx_en_B.png', show_shapes=True)
     # relay
     TxRxR = keras.Model(inputs=SE_model.get_layer('TxRModel').input,
                         outputs=SE_model.get_layer('TxRModel').output)
-    # keras.utils.plot_model(TxRxR, to_file='../Semantic_PNC_test_LN/Models/Block_Model/TxRxR.png', show_shapes=True)
+    # keras.utils.plot_model(TxRxR, to_file='../SE_PNC/Models/Block_Model/TxRxR.png', show_shapes=True)
     # RX decoder
     # Node A
     Rx_de_B = keras.Model(inputs=SE_model.get_layer('RxModel_A').input,
                           outputs=SE_model.get_layer('RxModel_A').output)
-    # keras.utils.plot_model(Rx_de_B, to_file='../Semantic_PNC_test_LN/Models/Block_Model/Rx_de_B.png', show_shapes=True)
+    # keras.utils.plot_model(Rx_de_B, to_file='../SE_PNC/Models/Block_Model/Rx_de_B.png', show_shapes=True)
     # Node B
     Rx_de_A = keras.Model(inputs=SE_model.get_layer('RxModel_B').input, 
                           outputs=SE_model.get_layer('RxModel_B').output)
-    # keras.utils.plot_model(Rx_de_A, to_file='../Semantic_PNC_test_LN/Models/Block_Model/Rx_de_A.png', show_shapes=True)
+    # keras.utils.plot_model(Rx_de_A, to_file='../SE_PNC/Models/Block_Model/Rx_de_A.png', show_shapes=True)
 
     return Tx_en_A, Tx_en_B, TxRxR, Rx_de_A, Rx_de_B
 
