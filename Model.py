@@ -35,10 +35,10 @@ class ChannelLayerRelay(keras.layers.Layer):
         inputs_complex_B = tf.complex(real=inputs_real_B, imag=inputs_imag_B)
         # AWGN channel
         if self.channel_type == 'AWGN':
-            phase_offsetsA = tf.random.uniform(shape=(1,), minval=0, maxval=90)
-            hA_complex = tf.exp(tf.complex(real=0., imag=math.pi * phase_offsetsA / 180))
-            phase_offsetsB = tf.random.uniform(shape=(1,), minval=0, maxval=90)
-            hB_complex = tf.exp(tf.complex(real=0., imag=math.pi * phase_offsetsB / 180))
+            # phase_offsetsA = tf.random.uniform(shape=(1,), minval=0, maxval=90)
+            hA_complex = tf.exp(tf.complex(real=0., imag=math.pi * 0 / 180))
+            # phase_offsetsB = tf.random.uniform(shape=(1,), minval=0, maxval=90)
+            hB_complex = tf.exp(tf.complex(real=0., imag=math.pi * self.phase_offsets / 180))
         # Rayleigh channel
         elif self.channel_type == 'Rayleigh':
             print('修改！')
