@@ -5,7 +5,13 @@
 train DNN-based PNC
 """
 
-# import os
+import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"  # 指定显卡
+config = tf.compat.v1.ConfigProto(allow_soft_placement=True)  # 开启软放置，OP放到CPU上了，为啥源码默认值是7？
+config.gpu_options.per_process_gpu_memory_fraction = 0.7  # 进程最多采用30%显存，默认是1，完整使用
+tf.compat.v1.keras.backend.set_session(tf.compat.v1.Session(config=config))
+
 #
 # os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 # os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
