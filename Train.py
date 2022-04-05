@@ -6,7 +6,6 @@ train DNN-based PNC
 """
 
 
-
 import copy
 import random
 import numpy as np
