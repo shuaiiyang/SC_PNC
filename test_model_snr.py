@@ -14,9 +14,43 @@ from Model import ChannelLayerRelay, ChannelLayer, ResidualBlockTx, ResidualBloc
 from Channel import channel_relay, channel
 import os
 
-os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+# os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 plt.rcParams['font.sans-serif'] = ['Microsoft YaHei']  # 用来正常显示中文标签
+
+
+# 加载图片数据
+def data_loader():
+    # Step1: load data cifar100
+    cifar = keras.datasets.cifar100
+    (x_train, _), (x_test, _) = cifar.load_data(label_mode='coarse')
+    x_train_ = []
+    for i in range(0, len(x_train), 1000):
+        x_train_.append(tf.image.rgb_to_grayscale(x_train[i:i + 1000, :, :, :]))
+    x_test_ = []
+    for i in range(0, len(x_test), 1000):
+        x_test_.append(tf.image.rgb_to_grayscale(x_test[i:i + 1000, :, :, :]))
+    x_train_ = np.reshape(np.array(x_train_), (x_train.shape[0], 32, 32, 1))
+    x_test_ = np.reshape(np.array(x_test_), (x_test.shape[0], 32, 32, 1))
+
+    # Step2: normalize
+    x_train_ = x_train_.astype('float32') / 255.
+    x_test_ = x_test_.astype('float32') / 255.
+    # x_train = x_train.reshape(x_train.shape[0], 28, 28, 1)
+    # x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
+    x_train_A = copy.deepcopy(x_train_)
+    x_train_B = copy.deepcopy(x_train_)
+    x_test_A = copy.deepcopy(x_test_)
+    x_test_B = copy.deepcopy(x_test_)
+    # show_images(x_train_A, x_train_B)
+    # show_images(x_test_A, x_test_B)
+    random.shuffle(x_train_A)
+    random.shuffle(x_train_B)
+    random.shuffle(x_test_A)
+    random.shuffle(x_test_B)
+    # show_images(x_train_A, x_train_B)
+    # show_images(x_test_A, x_test_B)
+    return (x_train_A, x_train_B), (x_test_A, x_test_B)
 
 
 # 显示图片结果
@@ -30,19 +64,19 @@ def disp_result(decode, range_SNR, interval):
     for i in range(len(pl_rangeSNR)):
         # original_A -> 第一行
         p1 = plt.subplot(4, len(pl_rangeSNR), i + 1)
-        p1.imshow(decode['original_A'][i].reshape(28, 28), cmap='gray')  # 显示灰度图
+        p1.imshow(decode['original_A'][i].reshape(32, 32), cmap='gray')  # 显示灰度图
         p1.set_title('Original_A', fontproperties="SimHei", fontsize=10)
         # trans_A -> 第二行
         p2 = plt.subplot(4, len(pl_rangeSNR), i + len(pl_rangeSNR) + 1)
-        p2.imshow(decode['trans_A'][i].reshape(28, 28), cmap='gray')  # 显示灰度图
+        p2.imshow(decode['trans_A'][i].reshape(32, 32), cmap='gray')  # 显示灰度图
         p2.set_title('SNR = ' + str(pl_rangeSNR[i]), fontproperties="SimHei", fontsize=10)
         # original_B -> 第三行
         p3 = plt.subplot(4, len(pl_rangeSNR), i + 2 * len(pl_rangeSNR) + 1)
-        p3.imshow(decode['original_B'][i].reshape(28, 28), cmap='gray')  # 显示灰度图
+        p3.imshow(decode['original_B'][i].reshape(32, 32), cmap='gray')  # 显示灰度图
         p3.set_title('Original_B', fontproperties="SimHei", fontsize=10)
         # trans_B -> 第四行
         p4 = plt.subplot(4, len(pl_rangeSNR), i + 3 * len(pl_rangeSNR) + 1)
-        p4.imshow(decode['trans_B'][i].reshape(28, 28), cmap='gray')  # 显示灰度图
+        p4.imshow(decode['trans_B'][i].reshape(32, 32), cmap='gray')  # 显示灰度图
         p4.set_title('SNR = ' + str(pl_rangeSNR[i]), fontproperties="SimHei", fontsize=10)
     plt.savefig('../SE_PNC/Results/picture_predict.png', dpi=200)
     plt.close()
@@ -115,7 +149,7 @@ def show_images(decode_images, x_test, position_compare):
 
 # Semantic  communication model
 def se_model():
-    SE_model = keras.models.load_model('../SE_PNC/Models/3/SE_model.h5',
+    SE_model = keras.models.load_model('../SE_PNC/Models/SE_model_cifar.h5',
                                        {'ChannelLayerRelay': ChannelLayerRelay,
                                         'ChannelLayer': ChannelLayer,
                                         'ResidualBlockTx': ResidualBlockTx,
@@ -157,7 +191,7 @@ def se_model():
 def predict_model():
     # load model
     Tx_en_A, Tx_en_B, TxRxR, Rx_de_A, Rx_de_B = se_model()
-
+    (x_train_A, x_train_B), (x_test_1, x_test_2) = data_loader()
     # SNR range
     SNR = range(-10, 26)
     # peak signal-to-noise ratio
@@ -168,22 +202,22 @@ def predict_model():
     x_predict = {'original_A': [], 'original_B': [], 'trans_A': [], 'trans_B': []}
 
     # Step1: load data
-    _, (x_test, _) = keras.datasets.mnist.load_data()
+    # _, (x_test, _) = keras.datasets.mnist.load_data()
     # cifar = keras.datasets.cifar100
     # _, (x_test, _) = cifar.load_data(label_mode='coarse')
     # x_test = tf.image.resize(images=x_test, size=(28, 28))
     # x_test = tf.image.rgb_to_grayscale(x_test)
     # x_test = x_test / 255.  # 标准化
     # x_test = np.array(x_test)
-    x_test = x_test.astype('float32') / 255  # 标准化
-    x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
+    # x_test = x_test.astype('float32') / 255  # 标准化
+    # x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
     for SNR_dB in SNR:
         # 随机对比的图片
-        position_compare = random.randint(0, x_test.shape[0] - 1)
+        position_compare = random.randint(0, x_test_1.shape[0] - 1)
         # print('SNR=' + str(SNR_dB))
         print('SNR_dB=' + str(SNR_dB))
-        x_test_A = copy.deepcopy(x_test)
-        x_test_B = copy.deepcopy(x_test)
+        x_test_A = copy.deepcopy(x_test_1)
+        x_test_B = copy.deepcopy(x_test_2)
         random.shuffle(x_test_A)
         random.shuffle(x_test_B)
 
@@ -193,13 +227,13 @@ def predict_model():
         # signal overlapping
         y_R = channel_relay(inputs=[x_A, x_B], 
                             snra_db=SNR_dB,
-                            snrb_db=SNR_dB+2,
+                            snrb_db=SNR_dB,
                             channel_type='AWGN',
                             modulation='QPSK',
                             phase_offsets=0)
         x_R = TxRxR.predict(x=y_R)
         y_A = channel(inputs=x_R, snr_db=SNR_dB, channel_type='AWGN', modulation='QPSK')
-        y_B = channel(inputs=x_R, snr_db=SNR_dB+2, channel_type='AWGN', modulation='QPSK')
+        y_B = channel(inputs=x_R, snr_db=SNR_dB, channel_type='AWGN', modulation='QPSK')
         # Node A
         b_B = Rx_de_B.predict(x=[x_A, y_A])
         # Node B
