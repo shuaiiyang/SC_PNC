@@ -86,7 +86,7 @@ def main():
     pnc_model.summary()
 
     # Step3: train
-    epochs = 20
+    epochs = 3
     # save model graph
     keras.utils.plot_model(pnc_model, to_file='../SE_PNC/Models/SE_model_cifar.png', show_shapes=True)
     pnc_model.fit(x=[x_train_A, x_train_B],

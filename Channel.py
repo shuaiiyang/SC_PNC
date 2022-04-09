@@ -14,10 +14,10 @@ def channel_relay(inputs, snra_db, snrb_db, channel_type, modulation='BPSK', pha
     N0 = Eb/EbN0
     sigma = math.sqrt(N0/2)
     std = tf.constant(value=sigma, dtype=tf.float32)
-    inputs_real_A = inputs[0][:, 0:64]
-    inputs_imag_A = inputs[0][:, 64:128]
-    inputs_real_B = inputs[1][:, 0:64]
-    inputs_imag_B = inputs[1][:, 64:128]
+    inputs_real_A = inputs[0][:, 0:128]
+    inputs_imag_A = inputs[0][:, 128:256]
+    inputs_real_B = inputs[1][:, 0:128]
+    inputs_imag_B = inputs[1][:, 128:256]
     inputs_complex_A = tf.complex(real=inputs_real_A, imag=inputs_imag_A)
     inputs_complex_B = tf.complex(real=inputs_real_B, imag=inputs_imag_B)
     # AWGN channel
@@ -65,8 +65,8 @@ def channel(inputs, snr_db, channel_type, modulation='BPSK', *args, **kwargs):
     N0 = Eb / EbN0
     sigma = math.sqrt(N0 / 2)
     std = tf.constant(value=sigma, dtype=tf.float32)
-    inputs_real = inputs[:, 0:64]
-    inputs_imag = inputs[:, 64:128]
+    inputs_real = inputs[:, 0:128]
+    inputs_imag = inputs[:, 128:256]
     inputs_complex = tf.complex(real=inputs_real, imag=inputs_imag)
     # AWGN channel
     if channel_type == 'AWGN':

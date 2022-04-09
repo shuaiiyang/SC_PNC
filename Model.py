@@ -27,10 +27,10 @@ class ChannelLayerRelay(keras.layers.Layer):
         N0 = Eb / EbN0
         sigma = math.sqrt(N0 / 2)
         std = tf.constant(value=sigma, dtype=tf.float32)
-        inputs_real_A = inputs[0][:, 0:64, :]
-        inputs_imag_A = inputs[0][:, 64:128, :]
-        inputs_real_B = inputs[1][:, 0:64, :]
-        inputs_imag_B = inputs[1][:, 64:128, :]
+        inputs_real_A = inputs[0][:, 0:128, :]
+        inputs_imag_A = inputs[0][:, 128:256, :]
+        inputs_real_B = inputs[1][:, 0:128, :]
+        inputs_imag_B = inputs[1][:, 128:256, :]
         inputs_complex_A = tf.complex(real=inputs_real_A, imag=inputs_imag_A)
         inputs_complex_B = tf.complex(real=inputs_real_B, imag=inputs_imag_B)
         # AWGN channel
@@ -90,8 +90,8 @@ class ChannelLayer(keras.layers.Layer):
         N0 = Eb / EbN0
         sigma = math.sqrt(N0 / 2)
         std = tf.constant(value=sigma, dtype=tf.float32)
-        inputs_real = inputs[:, 0:64, :]
-        inputs_imag = inputs[:, 64:128, :]
+        inputs_real = inputs[:, 0:128, :]
+        inputs_imag = inputs[:, 128:256, :]
         inputs_complex = tf.complex(real=inputs_real, imag=inputs_imag)
         # AWGN channel
         if self.channel_type == 'AWGN':
@@ -273,12 +273,12 @@ class TxModel(keras.layers.Layer):
         super(TxModel, self).__init__(name=name, **kwargs)
         self.ResidualBlock_1 = ResidualBlockTx(out_channel=8, strides=2, downsample=True)
         self.ResidualBlock_2 = ResidualBlockTx(out_channel=16, strides=2, downsample=True)
-        self.ResidualBlock_3 = ResidualBlockTx(out_channel=32, strides=2, downsample=True)
+        self.ResidualBlock_3 = ResidualBlockTx(out_channel=32, strides=1, downsample=True)
         self.ResidualBlock_4 = ResidualBlockTx(out_channel=32, strides=1, downsample=False)
         self.Flatten = keras.layers.Flatten()
-        self.Dense = keras.layers.Dense(units=128, activation=None)
+        self.Dense = keras.layers.Dense(units=256, activation=None)
         self.LayerNorm = keras.layers.LayerNormalization(epsilon=1e-5)
-        self.Reshape = keras.layers.Reshape((128, 1))
+        self.Reshape = keras.layers.Reshape((256, 1))
 
     def call(self, inputs, *args, **kwargs):
         x = self.ResidualBlock_1(inputs)
@@ -302,9 +302,9 @@ class TxRModel(keras.layers.Layer):
         self.ResidualBlock_1 = ResidualBlock(out_channel=32, strides=1, downsample=True)
         self.ResidualBlock_2 = ResidualBlock(out_channel=32, strides=1, downsample=False)
         self.Flatten = keras.layers.Flatten()
-        self.Dense = keras.layers.Dense(units=128, activation=None)
+        self.Dense = keras.layers.Dense(units=256, activation=None)
         self.LayerNorm = keras.layers.LayerNormalization(epsilon=1e-5)
-        self.Reshape = keras.layers.Reshape((128, 1))
+        self.Reshape = keras.layers.Reshape((256, 1))
 
     def call(self, inputs, *args, **kwargs):
         # x = self.Flatten(inputs)
@@ -325,10 +325,10 @@ class RxModel(keras.layers.Layer):
     def __init__(self, name=None, **kwargs):
         super(RxModel, self).__init__(name=name, **kwargs)
         self.Concatenate = keras.layers.Concatenate(axis=1)
-        self.Dense_1 = keras.layers.Dense(units=4 * 4 * 32, activation=None)
-        self.Reshape_1 = keras.layers.Reshape((4, 4, 32))
+        self.Dense_1 = keras.layers.Dense(units=8 * 8 * 32, activation=None)
+        self.Reshape_1 = keras.layers.Reshape((8, 8, 32))
         self.ResidualBlock_1 = ResidualBlockRx(out_channel=32, strides=1, downsample=False)
-        self.ResidualBlock_2 = ResidualBlockRx(out_channel=16, strides=2, downsample=True)
+        self.ResidualBlock_2 = ResidualBlockRx(out_channel=16, strides=1, downsample=True)
         self.ResidualBlock_3 = ResidualBlockRx(out_channel=8, strides=2, downsample=True)
         self.ResidualBlock_4 = ResidualBlockRx(out_channel=4, strides=2, downsample=True)
         self.Flatten = keras.layers.Flatten()
