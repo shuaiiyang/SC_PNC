@@ -29,22 +29,22 @@ import os
 # 加载图片数据
 def data_loader():
     # Step1: load data cifar100
-    cifar = keras.datasets.cifar100
-    (x_train, _), (x_test, _) = cifar.load_data(label_mode='coarse')
-    x_train_ = []
-    for i in range(0, len(x_train), 1000):
-        x_train_.append(tf.image.rgb_to_grayscale(x_train[i:i + 1000, :, :, :]))
-    x_test_ = []
-    for i in range(0, len(x_test), 1000):
-        x_test_.append(tf.image.rgb_to_grayscale(x_test[i:i + 1000, :, :, :]))
-    x_train_ = np.reshape(np.array(x_train_), (x_train.shape[0], 32, 32, 1))
-    x_test_ = np.reshape(np.array(x_test_), (x_test.shape[0], 32, 32, 1))
+    cifar = keras.datasets.mnist
+    (x_train, _), (x_test, _) = cifar.load_data()
+    # x_train_ = []
+    # for i in range(0, len(x_train), 1000):
+    #     x_train_.append(tf.image.rgb_to_grayscale(x_train[i:i + 1000, :, :, :]))
+    # x_test_ = []
+    # for i in range(0, len(x_test), 1000):
+    #     x_test_.append(tf.image.rgb_to_grayscale(x_test[i:i + 1000, :, :, :]))
+    # x_train_ = np.reshape(np.array(x_train_), (x_train.shape[0], 32, 32, 1))
+    # x_test_ = np.reshape(np.array(x_test_), (x_test.shape[0], 32, 32, 1))
 
     # Step2: normalize
-    x_train_ = x_train_.astype('float32') / 255.
-    x_test_ = x_test_.astype('float32') / 255.
-    # x_train = x_train.reshape(x_train.shape[0], 28, 28, 1)
-    # x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
+    x_train_ = x_train.astype('float32') / 255.
+    x_test_ = x_test.astype('float32') / 255.
+    x_train_ = x_train_.reshape(x_train.shape[0], 28, 28, 1)
+    x_test_ = x_test_.reshape(x_test.shape[0], 28, 28, 1)
     x_train_A = copy.deepcopy(x_train_)
     x_train_B = copy.deepcopy(x_train_)
     x_test_A = copy.deepcopy(x_test_)
@@ -71,18 +71,18 @@ def main():
     #                                cache_data=False)
 
     # load model
-    # pnc_model = PNC_Model(input_shape=(32, 32, 1))
-    pnc_model = keras.models.load_model('../SE_PNC/Models/SE_model_cifar.h5',
-                                       {'ChannelLayerRelay': ChannelLayerRelay,
-                                        'ChannelLayer': ChannelLayer,
-                                        'ResidualBlockTx': ResidualBlockTx,
-                                        'ResidualBlock': ResidualBlock,
-                                        'ResidualBlockRx': ResidualBlockRx,
-                                        'PeakSignalToNoiseRatio': PeakSignalToNoiseRatio,
-                                        'TxModel': TxModel,
-                                        'TxRModel': TxRModel,
-                                        'RxModel': RxModel
-                                        })
+    pnc_model = PNC_Model(input_shape=(28, 28, 1))
+    # pnc_model = keras.models.load_model('../SE_PNC/Models/SE_model_test.h5',
+    #                                    {'ChannelLayerRelay': ChannelLayerRelay,
+    #                                     'ChannelLayer': ChannelLayer,
+    #                                     'ResidualBlockTx': ResidualBlockTx,
+    #                                     'ResidualBlock': ResidualBlock,
+    #                                     'ResidualBlockRx': ResidualBlockRx,
+    #                                     'PeakSignalToNoiseRatio': PeakSignalToNoiseRatio,
+    #                                     'TxModel': TxModel,
+    #                                     'TxRModel': TxRModel,
+    #                                     'RxModel': RxModel
+    #                                     })
     pnc_model.summary()
 
     # Step3: train
@@ -97,7 +97,7 @@ def main():
                   shuffle=True
                   )
 
-    pnc_model.save("../SE_PNC/Models/SE_model_cifar.h5")
+    pnc_model.save("../SE_PNC/Models/SE_model_test.h5")
 
 
 if __name__ == '__main__':
