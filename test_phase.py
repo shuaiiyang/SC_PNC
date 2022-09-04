@@ -67,7 +67,7 @@ def disp_result(decode, range_phase, interval):
         p4 = plt.subplot(4, len(pl_rangeSNR), i + 3 * len(pl_rangeSNR) + 1)
         p4.imshow(decode['trans_B'][i].reshape(28, 28), cmap='gray')  # disp
         p4.set_title('Phase_B = ' + str(pl_rangeSNR[i]), fontproperties="SimHei", fontsize=10)
-    plt.savefig('SC_PNC/result/picture_predict_phase.png', dpi=200)
+    plt.savefig('SC_PNC/results/picture_predict_phase.png', dpi=200)
     plt.close()
     # plt.show()
 
@@ -112,7 +112,7 @@ def plot_model_performance(psnr, psnr_A, psnr_B, range_phase, name):
     plt.xlabel('Phase offsets')
     plt.ylim([15, 30])
     plt.grid(linestyle='-.')
-    file_dir = 'SC_PNC/result/' + name + '.png'
+    file_dir = 'SC_PNC/results/' + name + '.png'
     plt.savefig(file_dir, dpi=200)
     plt.close()
     # plt.show()
@@ -154,7 +154,7 @@ def test_model():
     (x_test_1, x_test_2) = data_loader()
     # SNR range
     # SNR = range(-10, 26)
-    SNR_dB = 5
+    SNR_dB = 1
     # phase_offsets
     phase_offsets = range(0, 91, 5)
     # peak signal-to-noise ratio
