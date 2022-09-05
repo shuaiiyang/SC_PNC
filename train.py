@@ -17,7 +17,7 @@ from utils import generate_ds, PeakSignalToNoiseRatio
 from model import semantic_twrc as creat_model
 
 import os
-os.environ['CUDA_VISIBLE_DEVICES']='1'
+# os.environ['CUDA_VISIBLE_DEVICES']='1'
 
 
 # define global parameters
@@ -75,7 +75,7 @@ def main(args):
         # load weight of SC PNC
         weights_path = 'SC_PNC/save_weights/model.ckpt'
         assert len(glob.glob(weights_path+'*')), "cannot find {}".format(weights_path)
-        # model.load_weights(weights_path)
+        model.load_weights(weights_path)
 
     # custom learning rate curve
     def scheduler(now_epoch):

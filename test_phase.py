@@ -2,6 +2,7 @@
 # @Author  : Shuai_Yang
 # @Time    : 2022/3/5
 
+import os
 import copy
 import glob
 import keras
@@ -44,29 +45,29 @@ def disp_result(decode, range_phase, interval):
     :param interval: Relative Phase Offset value interval
     :return:
     """
-    # SNR interval
-    pl_rangeSNR = [x for x in range_phase if x % interval == 0]
+    # phase interval
+    pl_rangePhase = [x for x in range_phase if x % interval == 0]
     # image size
     plt.figure(figsize=(14, 8))
     plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=None, hspace=0.5)
 
-    for i in range(len(pl_rangeSNR)):
+    for i in range(len(pl_rangePhase)):
         # original_A -> first row
-        p1 = plt.subplot(4, len(pl_rangeSNR), i + 1)
+        p1 = plt.subplot(4, len(pl_rangePhase), i + 1)
         p1.imshow(decode['original_A'][i].reshape(28, 28), cmap='gray')  # disp
         p1.set_title('Original_A', fontproperties="SimHei", fontsize=10)
         # trans_A -> second row
-        p2 = plt.subplot(4, len(pl_rangeSNR), i + len(pl_rangeSNR) + 1)
+        p2 = plt.subplot(4, len(pl_rangePhase), i + len(pl_rangePhase) + 1)
         p2.imshow(decode['trans_A'][i].reshape(28, 28), cmap='gray')  # disp
-        p2.set_title('Phase_A = ' + str(pl_rangeSNR[i]), fontproperties="SimHei", fontsize=10)
+        p2.set_title('Phase_A = ' + str(pl_rangePhase[i]), fontproperties="SimHei", fontsize=10)
         # original_B -> third row
-        p3 = plt.subplot(4, len(pl_rangeSNR), i + 2 * len(pl_rangeSNR) + 1)
+        p3 = plt.subplot(4, len(pl_rangePhase), i + 2 * len(pl_rangePhase) + 1)
         p3.imshow(decode['original_B'][i].reshape(28, 28), cmap='gray')  # disp
         p3.set_title('Original_B', fontproperties="SimHei", fontsize=10)
         # trans_B -> fourth row
-        p4 = plt.subplot(4, len(pl_rangeSNR), i + 3 * len(pl_rangeSNR) + 1)
+        p4 = plt.subplot(4, len(pl_rangePhase), i + 3 * len(pl_rangePhase) + 1)
         p4.imshow(decode['trans_B'][i].reshape(28, 28), cmap='gray')  # disp
-        p4.set_title('Phase_B = ' + str(pl_rangeSNR[i]), fontproperties="SimHei", fontsize=10)
+        p4.set_title('Phase_B = ' + str(pl_rangePhase[i]), fontproperties="SimHei", fontsize=10)
     plt.savefig('SC_PNC/results/picture_predict_phase.png', dpi=200)
     plt.close()
     # plt.show()
@@ -147,6 +148,9 @@ def sc_model():
 
 
 def test_model():
+    if not os.path.exists("SC_PNC/results"):
+        # Create a folder to save results
+        os.makedirs("SC_PNC/results")
 
     batch_size=128
     # load model
@@ -201,6 +205,9 @@ def test_model():
     plot_model_performance(PSNR, PSNR_A, PSNR_B, phase_offsets, name='PSNR_phase')
     disp_result(x_predict, phase_offsets, interval=10)
     # save data
+    # if not os.path.exists("SC_PNC/data"):
+    #     # Create a folder to save results
+    #     os.makedirs("SC_PNC/data")
     # dataNew = 'SC_PNC/data/Deep_5dot5_degree_0_90.mat'
     # scio.savemat(dataNew, {'phase_offsets': list(phase_offsets), 'PSNR_A_B': PSNR_A, 'PSNR_B_A': PSNR_B})
 
