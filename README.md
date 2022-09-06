@@ -2,10 +2,16 @@
 
 This is the code for paper [Semantic Communication Empowered Physical-layer Network Coding](https://arxiv.org/abs/2209.00791). The model is implemented with TensorFlow. 
 
-<img src="model_structure/Semantic_PNC.png" alt="structure" width="500"/>
+<img src="model/Semantic_PNC.png" alt="structure" width="500"/>
+
+# Requirements
+
+* [Tensorflow](https://tensorflow.google.cn/) version >= 2.0
+* Python version >= 3.6
 
 # Usage
-The basic settings are contained in `options/base_options.py`, `options/train_options.py`, and `options/test_options.py`. 
+
+The basic settings are contained in `train.py`, use `test_*.py` to test the performance of the model.
 
 ## Training
 
